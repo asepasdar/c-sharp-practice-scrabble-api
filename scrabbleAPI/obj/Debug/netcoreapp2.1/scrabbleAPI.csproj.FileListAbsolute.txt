@@ -1,0 +1,14 @@
+D:\netcore\scrabbleAPI\scrabbleAPI\bin\Debug\netcoreapp2.1\scrabbleAPI.deps.json
+D:\netcore\scrabbleAPI\scrabbleAPI\bin\Debug\netcoreapp2.1\scrabbleAPI.runtimeconfig.json
+D:\netcore\scrabbleAPI\scrabbleAPI\bin\Debug\netcoreapp2.1\scrabbleAPI.runtimeconfig.dev.json
+D:\netcore\scrabbleAPI\scrabbleAPI\bin\Debug\netcoreapp2.1\scrabbleAPI.dll
+D:\netcore\scrabbleAPI\scrabbleAPI\obj\Debug\netcoreapp2.1\scrabbleAPI.csprojAssemblyReference.cache
+D:\netcore\scrabbleAPI\scrabbleAPI\obj\Debug\netcoreapp2.1\scrabbleAPI.csproj.CoreCompileInputs.cache
+D:\netcore\scrabbleAPI\scrabbleAPI\obj\Debug\netcoreapp2.1\scrabbleAPI.RazorAssemblyInfo.cache
+D:\netcore\scrabbleAPI\scrabbleAPI\obj\Debug\netcoreapp2.1\scrabbleAPI.RazorAssemblyInfo.cs
+D:\netcore\scrabbleAPI\scrabbleAPI\obj\Debug\netcoreapp2.1\scrabbleAPI.AssemblyInfoInputs.cache
+D:\netcore\scrabbleAPI\scrabbleAPI\obj\Debug\netcoreapp2.1\scrabbleAPI.AssemblyInfo.cs
+D:\netcore\scrabbleAPI\scrabbleAPI\obj\Debug\netcoreapp2.1\scrabbleAPI.RazorTargetAssemblyInfo.cache
+D:\netcore\scrabbleAPI\scrabbleAPI\bin\Debug\netcoreapp2.1\scrabbleAPI.pdb
+D:\netcore\scrabbleAPI\scrabbleAPI\obj\Debug\netcoreapp2.1\scrabbleAPI.dll
+D:\netcore\scrabbleAPI\scrabbleAPI\obj\Debug\netcoreapp2.1\scrabbleAPI.pdb
