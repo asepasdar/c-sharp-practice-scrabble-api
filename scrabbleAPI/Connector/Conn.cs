@@ -382,10 +382,17 @@ namespace scrabbleAPI.Connector
             {
                 using (MySqlCommand commandMysql = connMysql.CreateCommand())
                 {
-                    commandMysql.CommandText = "INSERT INTO `t_turn` (`room_id`, `user_id`, `turn`, `point`) VALUES ('" + turn.room_id + "', '" + turn.user_id + "', '" + turn.turn + "', '" + turn.point + "')";
+                    commandMysql.CommandText = "SELECT count(id) FROM t_turn WHERE room_id = '"+turn.room_id+"' AND user_id = '"+turn.user_id+"' AND turn = '"+turn.turn+"'";
                     commandMysql.CommandType = System.Data.CommandType.Text;
                     commandMysql.Connection = connMysql;
                     connMysql.Open();
+                    if (Convert.ToInt32(commandMysql.ExecuteScalar()) > 0)
+                        return returnTurn;
+
+                    commandMysql.CommandText = "INSERT INTO `t_turn` (`room_id`, `user_id`, `turn`, `point`) VALUES ('" + turn.room_id + "', '" + turn.user_id + "', '" + turn.turn + "', '" + turn.point + "')";
+                    commandMysql.CommandType = System.Data.CommandType.Text;
+                    commandMysql.Connection = connMysql;
+                    
                     if (commandMysql.ExecuteNonQuery() == 0)
                     {
                         connMysql.Close();
@@ -394,15 +401,18 @@ namespace scrabbleAPI.Connector
 
                     int id = Convert.ToInt32(commandMysql.LastInsertedId);
 
-                    foreach (WordGrid word in turn.list)
+                    if (turn.list != null)
                     {
-                        commandMysql.CommandText = "INSERT INTO `t_detail_turn` (`id_turn`, `row`, `col`, `huruf`) VALUES (" + id + ", " + word.row + ", " + word.col + ", '" + word.data + "')";
-                        commandMysql.CommandType = System.Data.CommandType.Text;
-                        commandMysql.Connection = connMysql;
-                        if (commandMysql.ExecuteNonQuery() == 0)
+                        foreach (WordGrid word in turn.list)
                         {
-                            connMysql.Close();
-                            return returnTurn;
+                            commandMysql.CommandText = "INSERT INTO `t_detail_turn` (`id_turn`, `row`, `col`, `huruf`) VALUES (" + id + ", " + word.row + ", " + word.col + ", '" + word.data + "')";
+                            commandMysql.CommandType = System.Data.CommandType.Text;
+                            commandMysql.Connection = connMysql;
+                            if (commandMysql.ExecuteNonQuery() == 0)
+                            {
+                                connMysql.Close();
+                                return returnTurn;
+                            }
                         }
                     }
                     returnTurn = selectTurn(id);
