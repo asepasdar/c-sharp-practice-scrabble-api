@@ -17,48 +17,94 @@ namespace scrabbleAPI.Connector
             connstring = @"server=localhost;userid=root;password=;database=scrabble";
         }
 
+        
+
+        //================= KEBUTUHAN UNTUK PENGECEKAN USER BERDASARKAN PARAMETER
+        public User SelectUserByParam(string param, string value)
+        {
+            User returnUser = new User();
+            using (MySqlConnection connMysql = new MySqlConnection(connstring))
+            {
+                using (MySqlCommand commandMysql = connMysql.CreateCommand())
+                {
+                    commandMysql.CommandText = "SELECT id, fb_id, name, device_id, token, created_at FROM t_user WHERE " + param + " = '" + value + "'";
+                    commandMysql.CommandType = System.Data.CommandType.Text;
+                    commandMysql.Connection = connMysql;
+                    connMysql.Open();
+                    using (MySqlDataReader reader = commandMysql.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            returnUser.id = Convert.ToInt32(reader["id"]);
+                            returnUser.fb_id = Convert.ToString(reader["fb_id"]);
+                            returnUser.name = Convert.ToString(reader["name"]);
+                            returnUser.device_id = Convert.ToString(reader["device_id"]);
+                            returnUser.token = Convert.ToString(reader["token"]);
+                            returnUser.created_at = Convert.ToDateTime(reader["created_at"]);
+                        }
+                        connMysql.Close();
+                        return returnUser;
+                    }
+                }
+            }
+        }
+        public bool CheckUserByParam(Dictionary<string, string> param)
+        {
+            using (MySqlConnection connMysql = new MySqlConnection(connstring))
+            {
+                using (MySqlCommand commandMysql = connMysql.CreateCommand())
+                {
+                    string conditions = " WHERE";
+                    string andHelp = "";
+                    int i = 0;
+                    foreach(KeyValuePair<string, string> data in param)
+                    {
+                        if (i > 0)
+                            andHelp = "AND";
+
+                        conditions += andHelp + " " + data.Key + " = '" + data.Value + "'";
+                        i++;
+                    }
+                    commandMysql.CommandText = "SELECT count(id) FROM t_user"+conditions;
+                    commandMysql.CommandType = System.Data.CommandType.Text;
+                    commandMysql.Connection = connMysql;
+                    connMysql.Open();
+                    var hasil = Convert.ToInt32(commandMysql.ExecuteScalar());
+                    if (hasil > 0)
+                        return true;
+
+                    connMysql.Close();
+                }
+            }
+            return false;
+        }
+        //================= END FUNGSI =============================================
+
+
+        //================== KEBUTUHAN KHUSUS UNTUK USER FACEBOOK ==================
         public User LoginWithFacebook(User user)
         {
             using (MySqlConnection connMysql = new MySqlConnection(connstring))
             {
                 using (MySqlCommand commandMysql = connMysql.CreateCommand())
                 {
-                    commandMysql.CommandText = "SELECT count(name) FROM t_user WHERE fb_id = '"+user.fb_id+"'";
+                    commandMysql.CommandText = "SELECT count(name) FROM t_user WHERE fb_id = '" + user.fb_id + "'";
                     commandMysql.CommandType = System.Data.CommandType.Text;
                     commandMysql.Connection = connMysql;
                     connMysql.Open();
                     var hasil = Convert.ToInt32(commandMysql.ExecuteScalar());
                     if (hasil == 0)
                         insertUser(user);
-
-                    return selectByFBId(user);
+                    User returnData = selectByFBId(user);
+                    ClearDeviceID(returnData.device_id);
+                    updateUser(returnData.id, user);
+                    return returnData;
                 }
             }
         }
-        public bool insertUser(User user)
-        {
-            using (MySqlConnection connMysql = new MySqlConnection(connstring))
-            {
-                using (MySqlCommand commandMysql = connMysql.CreateCommand())
-                {
-                    commandMysql.CommandText = "INSERT INTO t_user VALUES (" +
-                        "NULL, '"+user.fb_id+ "', " +
-                        "'" + user.name + "', " +
-                        "'" + user.device_id + "', " +
-                        "'" + user.fb_id + "-"+user.device_id+"', " +
-                        "NOW(), " +
-                        "NOW())";
-                    commandMysql.CommandType = System.Data.CommandType.Text;
-                    commandMysql.Connection = connMysql;
-                    connMysql.Open();
+        //================== END FUNGSI ============================================
 
-                    if (commandMysql.ExecuteNonQuery() > 0)
-                        return true;
-                    else
-                        return false;
-                }
-            }
-        }
+        //================= KEBUTUHAN KHUSUS UNTUK GUEST ===========================
         public User InsertGuest(User user)
         {
             User returnUser = new User();
@@ -86,29 +132,38 @@ namespace scrabbleAPI.Connector
                 }
             }
         }
-        public User checkUser(User user)
+        public User GuestTryToLogin(User user)
         {
             User returnUser = new User();
+            var checkParams = new Dictionary<string, string>();
+            checkParams.Add("device_id", user.device_id.ToString());
+            checkParams.Add("fb_id", "guest");
+            if (CheckUserByParam(checkParams))
+                returnUser = SelectUserByParam("device_id", user.device_id.ToString());
+            else
+                returnUser = InsertGuest(user);
+
+            ClearDeviceID(returnUser.device_id);
+            updateUser(returnUser.id, user);
+            return returnUser;
+        }
+        //================== END FUNGSI ============================================
+
+        //================= KEBUTUHAN UNTUK DATA USER ==============================
+        public bool ClearDeviceID(string device_id)
+        {
             using (MySqlConnection connMysql = new MySqlConnection(connstring))
             {
                 using (MySqlCommand commandMysql = connMysql.CreateCommand())
                 {
-                    commandMysql.CommandText = "SELECT id, name, device_id, token FROM t_user WHERE name = '" + user.name + "')";
+                    commandMysql.CommandText = "UPDATE `t_user` SET `device_id`='' WHERE `device_id`='"+ device_id +"'";
                     commandMysql.CommandType = System.Data.CommandType.Text;
                     commandMysql.Connection = connMysql;
                     connMysql.Open();
-                    using (MySqlDataReader reader = commandMysql.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            returnUser.id = Convert.ToInt32(reader["id"]);
-                            returnUser.name = Convert.ToString(reader["name"]);
-                            returnUser.device_id = Convert.ToString(reader["device_id"]);
-                            returnUser.token = Convert.ToString(reader["token"]);
-                        }
-                        connMysql.Close();
-                        return returnUser;
-                    }
+                    if (commandMysql.ExecuteNonQuery() > 0)
+                        return true;
+                    else
+                        return false;
                 }
             }
         }
@@ -118,7 +173,7 @@ namespace scrabbleAPI.Connector
             {
                 using (MySqlCommand commandMysql = connMysql.CreateCommand())
                 {
-                    commandMysql.CommandText = "UPDATE `t_user` SET `device_id`='" + user.device_id + "' WHERE  `id`=" + id;
+                    commandMysql.CommandText = "UPDATE `t_user` SET `device_id`='" + user.device_id + "' WHERE `id`=" + id;
                     commandMysql.CommandType = System.Data.CommandType.Text;
                     commandMysql.Connection = connMysql;
                     connMysql.Open();
@@ -184,7 +239,33 @@ namespace scrabbleAPI.Connector
                 }
             }
         }
+        public bool insertUser(User user)
+        {
+            using (MySqlConnection connMysql = new MySqlConnection(connstring))
+            {
+                using (MySqlCommand commandMysql = connMysql.CreateCommand())
+                {
+                    commandMysql.CommandText = "INSERT INTO t_user VALUES (" +
+                        "NULL, '" + user.fb_id + "', " +
+                        "'" + user.name + "', " +
+                        "'" + user.device_id + "', " +
+                        "'" + user.fb_id + "-" + user.device_id + "', " +
+                        "NOW(), " +
+                        "NOW())";
+                    commandMysql.CommandType = System.Data.CommandType.Text;
+                    commandMysql.Connection = connMysql;
+                    connMysql.Open();
 
+                    if (commandMysql.ExecuteNonQuery() > 0)
+                        return true;
+                    else
+                        return false;
+                }
+            }
+        }
+        //================= END FUNGSI KEBUTUHAN USER =============================
+
+        //============== FUNGSI UNTUK KEBUTUHAN LOBBY =============================
         public Room selectRoom(int id)
         {
             Room returnRoom = new Room();
@@ -231,7 +312,6 @@ namespace scrabbleAPI.Connector
             }
             return false;
         }
-
         public bool syncStart(Room room)
         {
             DateTime returnDate = DateTime.Now.AddSeconds(10);
@@ -289,6 +369,42 @@ namespace scrabbleAPI.Connector
             }
             return false;
         }
+        public List<Room> RoomList()
+        {
+            List<Room> allRoom = new List<Room>();
+            using (MySqlConnection connMysql = new MySqlConnection(connstring))
+            {
+                using (MySqlCommand commandMysql = connMysql.CreateCommand())
+                {
+                    commandMysql.CommandText = "SELECT * FROM t_room WHERE STATUS = 1 ORDER BY id DESC";
+                    commandMysql.CommandType = System.Data.CommandType.Text;
+                    commandMysql.Connection = connMysql;
+                    connMysql.Open();
+
+                    using (MySqlDataReader reader = commandMysql.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            allRoom.Add(new Room
+                            {
+                                id = Convert.ToInt32(reader["id"]),
+                                user_rm = Convert.ToInt32(reader["user_rm"]),
+                                user_guest = reader["user_guest"] == null ? 0 : Convert.ToInt32(reader["user_guest"]),
+                                status = Convert.ToInt32(reader["status"]),
+                                time_created = Convert.ToDateTime(reader["time_created"])
+                            }); ;
+                        }
+                    }
+                }
+                connMysql.Close();
+            }
+
+            return allRoom;
+        }
+        //=============== END FUNGSI ==============================================
+
+
+        //============== FUNGSI SAAT LOBBY DIMUALI ================================
         public Turn selectTurn(int id)
         {
             Turn returnTurn = new Turn();
@@ -421,39 +537,10 @@ namespace scrabbleAPI.Connector
                 }
             }
         }
-        public List<Room> RoomList()
-        {
-            List<Room> allRoom = new List<Room>();
-            using (MySqlConnection connMysql = new MySqlConnection(connstring))
-            {
-                using (MySqlCommand commandMysql = connMysql.CreateCommand())
-                {
-                    commandMysql.CommandText = "SELECT * FROM t_room WHERE STATUS = 1 ORDER BY id DESC";
-                    commandMysql.CommandType = System.Data.CommandType.Text;
-                    commandMysql.Connection = connMysql;
-                    connMysql.Open();
+        //============== END FUNGSI ===============================================
 
-                    using (MySqlDataReader reader = commandMysql.ExecuteReader())
-                    {
-                        while (reader.Read())
-                        {
-                            allRoom.Add(new Room
-                            {
-                                id = Convert.ToInt32(reader["id"]),
-                                user_rm = Convert.ToInt32(reader["user_rm"]),
-                                user_guest = reader["user_guest"] == null ? 0 : Convert.ToInt32(reader["user_guest"]),
-                                status = Convert.ToInt32(reader["status"]),
-                                time_created = Convert.ToDateTime(reader["time_created"])
-                            }); ;
-                        }
-                    }
-                }
-                connMysql.Close();
-            }
 
-            return allRoom;
-        }
-
+        //================ FUNGSI CHECK KONFIGURASI ===============================
         public bool isToken(string token)
         {
             if (token == "")
@@ -480,7 +567,6 @@ namespace scrabbleAPI.Connector
             }
             return false;
         }
-
         public string checkConfig(string param)
         {
             if (param == "")
@@ -499,5 +585,6 @@ namespace scrabbleAPI.Connector
                 }
             }
         }
+        //================ END FUNGSI CHECK KONFIGURASI ============================
     }
 }

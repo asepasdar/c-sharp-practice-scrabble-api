@@ -32,6 +32,9 @@ namespace scrabbleAPI.Controllers
         [HttpPost]
         public ActionResult<User> Post([FromBody] User user)
         {
+            User returnUser = new User();
+            return returnUser;
+            /*
             ReturnMessage message = new ReturnMessage();
             Conn mysqlGet = new Conn();
             User returnUser = new User();
@@ -39,6 +42,7 @@ namespace scrabbleAPI.Controllers
                 return new User();
 
             return mysqlGet.checkUser(user);
+            */
         }
 
         // PUT: api/User/5

@@ -26,7 +26,7 @@ namespace scrabbleAPI.Controllers
         public ActionResult<User> LoginWithGuest(int id, [FromBody] User user)
         {
             Conn conn = new Conn();
-            return conn.InsertGuest(user);
+            return conn.GuestTryToLogin(user);
         }
     }
 }

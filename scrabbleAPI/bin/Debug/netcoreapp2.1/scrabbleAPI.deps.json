@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "f181ebe4957fed8332814aa283c0a339d17e0e6c"
+    "signature": "7e5b9665a344b9c9863b81fca3c14e49a6887c85"
   },
   "compilationOptions": {
     "defines": [
@@ -24,6 +24,7 @@
     ".NETCoreApp,Version=v2.1": {
       "scrabbleAPI/1.0.0": {
         "dependencies": {
+          "Microsoft.AspNet.WebApi.Cors": "5.2.7",
           "Microsoft.AspNetCore.App": "2.1.1",
           "Microsoft.AspNetCore.Razor.Design": "2.1.2",
           "Microsoft.NETCore.App": "2.1.0",
@@ -65,6 +66,61 @@
         },
         "compile": {
           "lib/netstandard1.0/Google.Protobuf.dll": {}
+        }
+      },
+      "Microsoft.AspNet.Cors/5.2.7": {
+        "runtime": {
+          "lib/net45/System.Web.Cors.dll": {
+            "assemblyVersion": "5.2.7.0",
+            "fileVersion": "5.2.61128.0"
+          }
+        },
+        "compile": {
+          "lib/net45/System.Web.Cors.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebApi.Client/5.2.7": {
+        "dependencies": {
+          "Newtonsoft.Json": "11.0.2",
+          "Newtonsoft.Json.Bson": "1.0.1"
+        },
+        "runtime": {
+          "lib/netstandard2.0/System.Net.Http.Formatting.dll": {
+            "assemblyVersion": "5.2.7.0",
+            "fileVersion": "5.2.61128.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/System.Net.Http.Formatting.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebApi.Core/5.2.7": {
+        "dependencies": {
+          "Microsoft.AspNet.WebApi.Client": "5.2.7"
+        },
+        "runtime": {
+          "lib/net45/System.Web.Http.dll": {
+            "assemblyVersion": "5.2.7.0",
+            "fileVersion": "5.2.61128.0"
+          }
+        },
+        "compile": {
+          "lib/net45/System.Web.Http.dll": {}
+        }
+      },
+      "Microsoft.AspNet.WebApi.Cors/5.2.7": {
+        "dependencies": {
+          "Microsoft.AspNet.Cors": "5.2.7",
+          "Microsoft.AspNet.WebApi.Core": "5.2.7"
+        },
+        "runtime": {
+          "lib/net45/System.Web.Http.Cors.dll": {
+            "assemblyVersion": "5.2.7.0",
+            "fileVersion": "5.2.61128.0"
+          }
+        },
+        "compile": {
+          "lib/net45/System.Web.Http.Cors.dll": {}
         }
       },
       "Microsoft.AspNetCore.Razor.Design/2.1.2": {},
@@ -593,16 +649,6 @@
           }
         }
       },
-      "Microsoft.AspNet.WebApi.Client/5.2.6": {
-        "dependencies": {
-          "Newtonsoft.Json": "11.0.2",
-          "Newtonsoft.Json.Bson": "1.0.1"
-        },
-        "compile": {
-          "lib/netstandard2.0/System.Net.Http.Formatting.dll": {}
-        },
-        "compileOnly": true
-      },
       "Microsoft.AspNetCore/2.1.1": {
         "dependencies": {
           "Microsoft.AspNetCore.Diagnostics": "2.1.1",
@@ -642,7 +688,7 @@
       },
       "Microsoft.AspNetCore.App/2.1.1": {
         "dependencies": {
-          "Microsoft.AspNet.WebApi.Client": "5.2.6",
+          "Microsoft.AspNet.WebApi.Client": "5.2.7",
           "Microsoft.AspNetCore": "2.1.1",
           "Microsoft.AspNetCore.Antiforgery": "2.1.1",
           "Microsoft.AspNetCore.Authentication": "2.1.1",
@@ -3558,6 +3604,34 @@
       "path": "google.protobuf/3.6.1",
       "hashPath": "google.protobuf.3.6.1.nupkg.sha512"
     },
+    "Microsoft.AspNet.Cors/5.2.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-r7qTj8SKzHT32F2mbB3qgE+6VUd2xILkGaq4LtMW+KP3dDAQmI//j+8Ku01I3D1GKZvB9PU8HTJPkaw7sxSLtQ==",
+      "path": "microsoft.aspnet.cors/5.2.7",
+      "hashPath": "microsoft.aspnet.cors.5.2.7.nupkg.sha512"
+    },
+    "Microsoft.AspNet.WebApi.Client/5.2.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-/76fAHknzvFqbznS6Uj2sOyE9rJB3PltY+f53TH8dX9RiGhk02EhuFCWljSj5nnqKaTsmma8DFR50OGyQ4yJ1g==",
+      "path": "microsoft.aspnet.webapi.client/5.2.7",
+      "hashPath": "microsoft.aspnet.webapi.client.5.2.7.nupkg.sha512"
+    },
+    "Microsoft.AspNet.WebApi.Core/5.2.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-gM2QzApnHdy1FbKUJ/ROGJSm69P2G+HMoVd/t5Vq1O/zZ5TI4IKC9PX6nUfRt/NHgebZOIWHpB4/4K4inuy4yQ==",
+      "path": "microsoft.aspnet.webapi.core/5.2.7",
+      "hashPath": "microsoft.aspnet.webapi.core.5.2.7.nupkg.sha512"
+    },
+    "Microsoft.AspNet.WebApi.Cors/5.2.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-LUY5ufoiYLHKZXdrrNe7GlAwmu9WlyrX5iUtBSLwFZ31/tvPobyU7j1E31OWVdGZMBvRCxKbfyB7unxgrjTRpA==",
+      "path": "microsoft.aspnet.webapi.cors/5.2.7",
+      "hashPath": "microsoft.aspnet.webapi.cors.5.2.7.nupkg.sha512"
+    },
     "Microsoft.AspNetCore.Razor.Design/2.1.2": {
       "type": "package",
       "serviceable": true,
@@ -3760,13 +3834,6 @@
       "sha512": "sha512-cJV7ScGW7EhatRsjehfvvYVBvtiSMKgN8bOVI0bQhnF5bU7vnHVIsH49Kva7i7GWaWYvmEzkYVk1TC+gZYBEog==",
       "path": "system.security.cryptography.protecteddata/4.4.0",
       "hashPath": "system.security.cryptography.protecteddata.4.4.0.nupkg.sha512"
-    },
-    "Microsoft.AspNet.WebApi.Client/5.2.6": {
-      "type": "package",
-      "serviceable": true,
-      "sha512": "sha512-owAlEIUZXWSnkK8Z1c+zR47A0X6ykF4XjbPok4lQKNuciUfHLGPd6QnI+rt/8KlQ17PmF+I4S3f+m+Qe4IvViw==",
-      "path": "microsoft.aspnet.webapi.client/5.2.6",
-      "hashPath": "microsoft.aspnet.webapi.client.5.2.6.nupkg.sha512"
     },
     "Microsoft.AspNetCore/2.1.1": {
       "type": "package",
